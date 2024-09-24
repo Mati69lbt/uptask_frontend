@@ -1,8 +1,14 @@
+// cspell: ignore Uptask, toastify, Matias
+import createProject from "@/api/ProjectAPI";
+import ProjectForm from "@/components/projects/ProjectForm";
+import { ProjectFormData } from "@/types/index";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const CreateProjectView = () => {
-  const initialValues = {
+  const navigate = useNavigate();
+  const initialValues: ProjectFormData = {
     projectName: "",
     clientName: "",
     description: "",
@@ -13,8 +19,10 @@ const CreateProjectView = () => {
     formState: { errors },
   } = useForm({ defaultValues: initialValues });
 
-  const handleForm = (data) => {
-    console.log(data);
+  const handleForm = async (formData: ProjectFormData) => {
+    const data = await createProject(formData);
+    toast.success(data.message);
+    navigate("/");
   };
   return (
     <>
@@ -36,6 +44,7 @@ const CreateProjectView = () => {
           onSubmit={handleSubmit(handleForm)}
           noValidate
         >
+          <ProjectForm register={register} errors={errors} />
           <input
             type="submit"
             value="Crear Proyecto"

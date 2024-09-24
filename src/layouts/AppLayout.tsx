@@ -1,7 +1,9 @@
-// cspell: ignore Uptask
+// cspell: ignore Uptask, toastify, Matias
 import LogoUptask from "@/components/LogoUptask";
 import NavMenu from "@/components/NavMenu";
 import { Outlet } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AppLayout = () => {
   return (
@@ -22,6 +24,7 @@ const AppLayout = () => {
           Matias Delgado - {new Date().getFullYear()}{" "}
         </p>
       </footer>
+      <ToastContainer pauseOnHover={false} pauseOnFocusLoss={false} />
     </>
   );
 };
