@@ -42,3 +42,12 @@ export async function updateProject({ formData, projectId }: ProjectAPIType) {
     console.log(error);
   }
 }
+
+export async function deleteProject(id: Project["_id"]) {
+  try {
+    const { data } = await api.delete<string>(`/projects/${id}`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
