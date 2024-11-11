@@ -1,7 +1,9 @@
-// cspell: ignore Uptask, toastify, Matias
-import createProject from "@/api/ProjectAPI";
+// cspell: ignore Uptask, toastify, Matias, tanstack
+
+import { createProject } from "@/api/ProjectAPI";
 import ProjectForm from "@/components/projects/ProjectForm";
 import { ProjectFormData } from "@/types/index";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -19,10 +21,19 @@ const CreateProjectView = () => {
     formState: { errors },
   } = useForm({ defaultValues: initialValues });
 
-  const handleForm = async (formData: ProjectFormData) => {
-    const data = await createProject(formData);
-    toast.success(data.message);
-    navigate("/");
+  const mutation = useMutation({
+    mutationFn: createProject,
+    onError: () => {
+      toast.error("Error creating project");
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      navigate("/");
+    },
+  });
+
+  const handleForm = (formData: ProjectFormData) => {
+    mutation.mutate(formData);
   };
   return (
     <>
