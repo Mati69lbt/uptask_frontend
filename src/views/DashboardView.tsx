@@ -108,7 +108,14 @@ const DashboardView = () => {
                           <button
                             type="button"
                             className="block px-3 py-1 text-sm leading-6 text-red-500"
-                            onClick={() => mutate(project._id)}
+                            onClick={() => {
+                              const confirmDelete = window.confirm(
+                                "¿Estás seguro de que quieres eliminar esta proyecto?"
+                              );
+                              if (confirmDelete) {
+                                mutate(project._id);
+                              }
+                            }}
                           >
                             Eliminar Proyecto
                           </button>
