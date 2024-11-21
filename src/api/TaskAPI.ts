@@ -1,6 +1,6 @@
 import api from "@/lib/axios";
 import { isAxiosError } from "axios";
-import { Project, Task, TaskFormData } from "../types";
+import { Project, Task, TaskFormData, taskSchema } from "../types";
 
 type TaskAPI = {
   formData: TaskFormData;
@@ -30,7 +30,8 @@ export async function getTaskById({
   try {
     const url = `/projects/${projectId}/tasks/${taskId}`;
     const { data } = await api(url);
-    return data;
+    const response = taskSchema.safeParse(data.task);
+    return response.data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.console.error);

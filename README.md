@@ -1,2 +1,5 @@
 "/e/Septiembre 24/uptask_frontend"
-001 mostrar la tarea en un modal
+002 Creando la peticion para cambiar el estado
+
+ver que no se editan las tareas
+ver q modifique el gettaskbyid, lo del response
