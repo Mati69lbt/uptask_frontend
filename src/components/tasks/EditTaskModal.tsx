@@ -9,14 +9,13 @@ import { updateTask } from "@/api/TaskAPI";
 import { toast } from "react-toastify";
 
 type EditTaskModalProps = {
-  data: {
-    status: string;
-    task: Task;
-  };
+  data: Task;
   taskId: Task["_id"];
 };
 
 export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
+  
+
   const navigate = useNavigate();
 
   const params = useParams();
@@ -29,8 +28,8 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
     formState: { errors },
   } = useForm<TaskFormData>({
     defaultValues: {
-      name: data.task.name,
-      description: data.task.description,
+      name: data.name,
+      description: data.description,
     },
   });
 
@@ -42,13 +41,13 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
       toast.error("Error al actualizar la tarea");
     },
     onSuccess: () => {
+      toast.success("Tarea actualizada con éxito");
       queryClient.invalidateQueries({
         queryKey: ["editProject", projectId],
       });
       queryClient.invalidateQueries({
         queryKey: ["task", taskId],
       });
-      toast.success("Tarea actualizada con éxito");
       reset();
       navigate(location.pathname, { replace: true });
     },

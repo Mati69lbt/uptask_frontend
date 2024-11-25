@@ -1,5 +1,9 @@
 "/e/Septiembre 24/uptask_frontend"
-002 Creando la peticion para cambiar el estado
 
-ver que no se editan las tareas
-ver q modifique el gettaskbyid, lo del response
+Copiado al reproductor hasta el 42 inclusive 008 modificando el password
+
+
+revisar  editar tareas
+
+
+001 introduccion a la autenticacion
