@@ -34,6 +34,10 @@ const TaskList = ({ tasks }: TaskListProps) => {
     return { ...acc, [task.status]: currentGroup };
   }, initialStatusGroup);
 
+  Object.keys(groupedTasks).forEach((status) => {
+    groupedTasks[status].sort((a, b) => a.name.localeCompare(b.name));
+  });
+
   return (
     <>
       <h2 className="text-5xl font-black my-10">Tareas</h2>

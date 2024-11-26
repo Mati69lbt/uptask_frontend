@@ -3,7 +3,4 @@
 Copiado al reproductor hasta el 42 inclusive 008 modificando el password
 
 
-revisar  editar tareas
-
-
-001 introduccion a la autenticacion
+008 Solicitar un nuevo codigo de confirmacion en caso de que expire
