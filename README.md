@@ -3,4 +3,6 @@
 Copiado al reproductor hasta el 42 inclusive 008 modificando el password
 
 
-008 Solicitar un nuevo codigo de confirmacion en caso de que expire
+CONTROLAR PORQUE NO SE GUARDAN LOS TOKENS
+
+010 creando la funcionalidad de autenticar

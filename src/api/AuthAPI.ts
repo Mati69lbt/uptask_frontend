@@ -1,6 +1,11 @@
 import api from "@/lib/axios";
 import { isAxiosError } from "axios";
-import { ConfirmToken, UserRegistrationForm } from "../types";
+import {
+  ConfirmToken,
+  RequestConfirmationCodeForm,
+  UserLoginForm,
+  UserRegistrationForm,
+} from "../types";
 
 export async function createAccount(formatDate: UserRegistrationForm) {
   try {
@@ -9,7 +14,7 @@ export async function createAccount(formatDate: UserRegistrationForm) {
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.console.error);
+      throw new Error(error.response.data.error);
     }
   }
 }
@@ -18,9 +23,35 @@ export async function confirmAccount(formatDate: ConfirmToken) {
     const url = "/auth/confirm-account";
     const { data } = await api.post<string>(url, formatDate);
     return data;
-  } catch (error) {    
+  } catch (error) {
     if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.console.error);
+      throw new Error(error.response.data.error);
+    }
+  }
+}
+export async function requestConfirmationCode(
+  formatDate: RequestConfirmationCodeForm
+) {
+  try {
+    const url = "/auth/request-code";
+    const { data } = await api.post<string>(url, formatDate);
+    return data;
+  } catch (error) { 
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+}
+export async function AuthenticateUsers(
+  formatDate: UserLoginForm
+) {
+  try {
+    const url = "/auth/login";
+    const { data } = await api.post<string>(url, formatDate);
+    return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
     }
   }
 }
