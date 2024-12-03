@@ -4,6 +4,6 @@ export function formatDate(isoString: string): string {
     year: "numeric",
     month: "long",
     day: "numeric",
-  })
+  });
   return formatter.format(data);
 }
