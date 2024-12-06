@@ -7,6 +7,7 @@ import {
   RequestConfirmationCodeForm,
   UserLoginForm,
   UserRegistrationForm,
+  userSchema,
 } from "../types";
 
 export async function createAccount(formatData: UserRegistrationForm) {
@@ -48,6 +49,8 @@ export async function AuthenticateUsers(formatData: UserLoginForm) {
   try {
     const url = "/auth/login";
     const { data } = await api.post<string>(url, formatData);
+    //localStorage
+    localStorage.setItem("AUTH_TOKEN", data);
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
@@ -88,6 +91,19 @@ export async function updatePasswordWithToken({
     const url = `/auth/update-password/${token}`;
     const { data } = await api.post<string>(url, formatData);
     return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+}
+export async function getUser() {
+  try {
+    const { data } = await api("/auth/user");
+    const response = userSchema.safeParse(data);
+    if (response.success) {
+      return response.data;
+    }
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
