@@ -2,4 +2,5 @@
 
 Copiado al reproductor hasta el 50 inclusive
 
-001 Modificando el modelo para tener un equipo
+LISTO TODO ESA REPRODUCCION DE VIDEOS HACER UNA NUEVA A PARTIR DEL 51
+
