@@ -2,4 +2,4 @@
 
 TODO COPIADO A LA LISTA DE REPRODUCCION
 
-003 validacion con zod
+010 invalidando las query

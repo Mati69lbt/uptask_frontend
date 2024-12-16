@@ -13,6 +13,7 @@ import { getTaskById, updateStatus } from "@/api/TaskAPI";
 import { formatDate } from "@/utils/utils";
 import { statusTranslations } from "@/locales/es";
 import { TaskStatus } from "@/types/index";
+import NotesPanel from "../notes/NotesPanel";
 
 export default function TaskModalDetails() {
   const params = useParams();
@@ -109,25 +110,28 @@ export default function TaskModalDetails() {
                     <p className="text-lg text-slate-500 mb-2">
                       Descripción: {task.description}
                     </p>
-                    <p className="text-2xl text-slate-500 mb-2">
-                      Historial de Cambios
-                    </p>
-                    <ul className="list-decimal pl-6">
-                      {task.completedBy.map((actividades) => (
-                        <li
-                          key={actividades._id}
-                          className="flex justify-between items-center mb-2 p-2 border border-gray-300 rounded"
-                        >
-                          <strong className="text-gray-700">
-                            {statusTranslations[actividades.status]}
-                          </strong>
-                          <span className="text-gray-500">
-                            {actividades.user.name}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-
+                    {task.completedBy.length ? (
+                      <>
+                        <p className="text-2xl text-slate-500 mb-2">
+                          Historial de Cambios
+                        </p>
+                        <ul className="list-decimal pl-6">
+                          {task.completedBy.map((actividades) => (
+                            <li
+                              key={actividades._id}
+                              className="flex justify-between items-center mb-2 p-2 border border-gray-300 rounded"
+                            >
+                              <strong className="text-gray-700">
+                                {statusTranslations[actividades.status]}
+                              </strong>
+                              <span className="text-gray-500">
+                                {actividades.user.name}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    ) : null}
                     <div className="my-5 space-y-3">
                       <label className="font-bold">
                         Estado Actual:
@@ -146,6 +150,7 @@ export default function TaskModalDetails() {
                         </select>
                       </label>
                     </div>
+                    <NotesPanel notes={data.notes} />
                   </Dialog.Panel>
                 </Transition.Child>
               </div>
