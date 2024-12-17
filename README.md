@@ -2,4 +2,4 @@
 
 TODO COPIADO A LA LISTA DE REPRODUCCION
 
-010 invalidando las query
+007 creamdpo una funcion q revise el password
