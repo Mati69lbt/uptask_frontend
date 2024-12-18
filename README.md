@@ -2,4 +2,4 @@
 
 TODO COPIADO A LA LISTA DE REPRODUCCION
 
-007 creamdpo una funcion q revise el password
+003 ultimos ajustes controlador

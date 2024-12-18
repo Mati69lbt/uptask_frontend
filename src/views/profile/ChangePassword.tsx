@@ -3,7 +3,7 @@ import ErrorMessage from "@/components/ErrorMessage";
 import { UpdateCurrentUserPasswordForm } from "@/types/index";
 import { changePassword } from "@/api/ProfileApi";
 import { toast } from "react-toastify";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 const ChangePassword = () => {
   const initialValues: UpdateCurrentUserPasswordForm = {
@@ -19,8 +19,6 @@ const ChangePassword = () => {
     formState: { errors },
   } = useForm({ defaultValues: initialValues });
 
-  const queryClient = useQueryClient();
-
   const { mutate } = useMutation({
     mutationFn: changePassword,
     onError: (error) => {
@@ -28,7 +26,6 @@ const ChangePassword = () => {
     },
     onSuccess: (data) => {
       toast.success(data);
-      // queryClient.invalidateQueries({ queryKey: ["task", taskId] });
     },
   });
 

@@ -2,10 +2,9 @@
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
-import { deleteProject, getProjects } from "@/api/ProjectAPI";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getProjects } from "@/api/ProjectAPI";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
 import DeleteProjectModal from "@/components/projects/DeleteProjectModal";
 
@@ -17,7 +16,7 @@ const DashboardView = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: getProjects,
-  }); 
+  });
 
   if (isLoading && authLoading) return "Cargando...";
 
