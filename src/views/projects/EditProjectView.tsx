@@ -23,7 +23,7 @@ const EditProjectView = () => {
     return <Navigate to="/404" />;
   }
   if (data) {
-    return <EditProjectForm data={data.project} projectId={projectId} />;
+    return <EditProjectForm data={data} projectId={projectId} />;
   }
 };
 

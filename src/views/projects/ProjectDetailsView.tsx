@@ -1,5 +1,5 @@
 // cspell: ignore Uptask, toastify, Matias, tanstack, headlessui, heroicons
-import { getProjectById } from "@/api/ProjectAPI";
+import { getFullProject } from "@/api/ProjectAPI";
 import AddTaskModal from "@/components/tasks/AddTaskModal";
 import EditTaskData from "@/components/tasks/EditTaskData";
 import TaskList from "@/components/tasks/TaskList";
@@ -17,15 +17,12 @@ const ProjectDetailsView = () => {
   const projectId = params.projectId!;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["editProject", projectId],
-    queryFn: () => getProjectById(projectId),
+    queryKey: ["editProject", projectId], //si falla es editProject
+    queryFn: () => getFullProject(projectId),
     retry: false,
   });
 
-  const canEdit = useMemo(
-    () => data?.project.manager === user?._id,
-    [data, user]
-  );
+  const canEdit = useMemo(() => data?.manager === user?._id, [data, user]);
 
   if (isLoading && authLoading) {
     return <div>Loading...</div>;
@@ -37,10 +34,10 @@ const ProjectDetailsView = () => {
   if (data && user)
     return (
       <>
-        <h1 className="text-5xl font-black">{data.project.projectName}</h1>
-        <p className="text-2xl font-light">{data.project.description}</p>
+        <h1 className="text-5xl font-black">{data.projectName}</h1>
+        <p className="text-2xl font-light">{data.description}</p>
 
-        {isManager(data.project.manager, user._id) && (
+        {isManager(data.manager, user._id) && (
           <nav className="my-5 flex gap-3">
             <button
               type="button"
@@ -58,7 +55,7 @@ const ProjectDetailsView = () => {
           </nav>
         )}
 
-        <TaskList tasks={data.project.tasks} canEdit={canEdit} />
+        <TaskList tasks={data.tasks} canEdit={canEdit} />
         <AddTaskModal />
         <EditTaskData />
         <TaskModalDetails />
