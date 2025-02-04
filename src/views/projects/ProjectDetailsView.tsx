@@ -33,12 +33,10 @@ const ProjectDetailsView = () => {
 
   // ver si funciona
   const modalTask = new URLSearchParams(location.search).get("newTask");
-  const isModalOpen = modalTask === "true";
-
+  // const isModalOpen = modalTask === "true";
 
   if (data && user)
-    return (
-      // <div className={`${isModalOpen ? "opacity-0 pointer-events-none" : "opacity-100"} transition-opacity duration-300`}>
+    return (    
       <>
         <h1 className="text-5xl font-black">{data.projectName}</h1>
         <p className="text-2xl font-light">{data.description}</p>
