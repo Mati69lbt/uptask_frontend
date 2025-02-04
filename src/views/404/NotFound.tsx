@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import "./estilos.css";
 const NotFound = () => {
   return (
