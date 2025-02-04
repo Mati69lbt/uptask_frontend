@@ -31,9 +31,6 @@ const ProjectDetailsView = () => {
     return <Navigate to="/404" />;
   }
 
-  // ver si funciona
-  const modalTask = new URLSearchParams(location.search).get("newTask");
-  // const isModalOpen = modalTask === "true";
 
   if (data && user)
     return (    
