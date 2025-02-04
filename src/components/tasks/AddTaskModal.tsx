@@ -1,21 +1,21 @@
-// cspell: ignore Uptask, toastify, Matias, tanstack, Exito, headlessui
-import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, useEffect } from "react";
+import ReactDOM from "react-dom";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import TaskForm from "./TaskForm";
 import { TaskFormData } from "@/types/index";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTask } from "@/api/TaskAPI";
 import { toast } from "react-toastify";
+import TaskForm from "./TaskForm";
 
 export default function AddTaskModal() {
   const navigate = useNavigate();
 
-  // Leer si modal existe
+  // Leer si el modal debe mostrarse
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const modalTask = queryParams.get("newTask");
+
   const show = modalTask ? true : false;
 
   // Obtener projectId
@@ -26,6 +26,7 @@ export default function AddTaskModal() {
     name: "",
     description: "",
   };
+
   const {
     register,
     handleSubmit,
@@ -42,7 +43,7 @@ export default function AddTaskModal() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["editProject", projectId],
+        queryKey: ["project", projectId],
       });
       toast.success("Tarea creada con éxito");
       reset();
@@ -55,64 +56,70 @@ export default function AddTaskModal() {
     mutate(data);
   };
 
-  return (
-    <>
-      <Transition appear show={show} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-10"
-          onClose={() => navigate(location.pathname, { replace: true })}
+  const handleClose = () => {
+    navigate(location.pathname, { replace: true });
+  };
+
+  useEffect(() => {
+    if (show) {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        document.body.style.overflow = "hidden"; // Bloquea el desplazamiento
+      }, 50);
+      const handleEsc = (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+          handleClose();
+        }
+      };
+      document.addEventListener("keydown", handleEsc);
+      return () => {
+        document.body.style.overflow = "auto"; // Restaura el scroll al cerrar el modal
+        document.removeEventListener("keydown", handleEsc);
+      };
+    }
+  }, [show]);
+
+  if (!show) return null;
+
+  return ReactDOM.createPortal(
+    <Fragment>
+      {/* Fondo Oscuro */}
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 z-50"
+        onClick={handleClose}
+      ></div>
+
+      {/* Contenido del Modal */}
+      <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div
+          className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-md"
+          onClick={(e) => e.stopPropagation()} // Evitar que el clic dentro del modal lo cierre
         >
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+          {/* Botón de cierre */}
+          <button
+            onClick={handleClose}
+            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
           >
-            <div className="fixed inset-0 bg-black/60" />
-          </Transition.Child>
+            ✖
+          </button>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-16">
-                  <Dialog.Title as="h3" className="font-black text-4xl  my-5">
-                    Nueva Tarea
-                  </Dialog.Title>
-
-                  <p className="text-xl font-bold">
-                    Llena el formulario y crea {""}
-                    <span className="text-fuchsia-600">una tarea</span>
-                  </p>
-                  <form
-                    className="mt-10 space-y-3"
-                    noValidate
-                    onSubmit={handleSubmit(handleCreateTask)}
-                  >
-                    <TaskForm register={register} errors={errors} />
-                    <input
-                      type="submit"
-                      value="Guardar Tarea"
-                      className=" bg-fuchsia-600 hover:bg-fuchsia-700 w-full p-3 text-white uppercase font-bold cursor-pointer transition-colors"
-                    />
-                  </form>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-    </>
+          <h3 className="text-2xl font-bold text-gray-800 mb-4">Nueva Tarea</h3>
+          <p className="text-gray-600 mb-6">
+            Llena el formulario y crea{" "}
+            <span className="text-fuchsia-600 font-semibold">una tarea</span>
+          </p>
+          <form onSubmit={handleSubmit(handleCreateTask)} className="space-y-4">
+            <TaskForm register={register} errors={errors} />
+            <button
+              type="submit"
+              className="w-full bg-fuchsia-600 text-white py-2 px-4 rounded-md hover:bg-fuchsia-700 transition"
+            >
+              Guardar Tarea
+            </button>
+          </form>
+        </div>
+      </div>
+    </Fragment>,
+    document.body
   );
 }

@@ -17,7 +17,7 @@ const ProjectDetailsView = () => {
   const projectId = params.projectId!;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["editProject", projectId], //si falla es editProject
+    queryKey: ["project", projectId],
     queryFn: () => getFullProject(projectId),
     retry: false,
   });
@@ -31,8 +31,14 @@ const ProjectDetailsView = () => {
     return <Navigate to="/404" />;
   }
 
+  // ver si funciona
+  const modalTask = new URLSearchParams(location.search).get("newTask");
+  const isModalOpen = modalTask === "true";
+
+
   if (data && user)
     return (
+      // <div className={`${isModalOpen ? "opacity-0 pointer-events-none" : "opacity-100"} transition-opacity duration-300`}>
       <>
         <h1 className="text-5xl font-black">{data.projectName}</h1>
         <p className="text-2xl font-light">{data.description}</p>
@@ -41,8 +47,10 @@ const ProjectDetailsView = () => {
           <nav className="my-5 flex gap-3">
             <button
               type="button"
-              className="bg-purple-400 hover:bg-purple-500 px-10 py-3 text-white text-xl font-bold cursor-pointer transition-colors"
-              onClick={() => navigate(location.pathname + "?newTask=true")}
+              className="bg-purple-400 hover:bg-purple-500 px-10 py-3 text-white text-xl font-bold cursor-pointer transition-colors"            
+              onClick={() => {
+                navigate(location.pathname + "?newTask=true");             
+              }}
             >
               Agregar Tarea
             </button>
@@ -59,7 +67,7 @@ const ProjectDetailsView = () => {
         <AddTaskModal />
         <EditTaskData />
         <TaskModalDetails />
-      </>
+        </>    
     );
 };
 export default ProjectDetailsView;

@@ -1,4 +1,4 @@
-import { Project,  TaskProject, TaskStatus } from "@/types/index";
+import { Project, TaskProject, TaskStatus } from "@/types/index";
 import TaskCard from "./TaskCard";
 import { statusTranslations } from "@/locales/es";
 import DropTask from "./DropTask";
@@ -46,7 +46,7 @@ const TaskList = ({ tasks, canEdit }: TaskListProps) => {
     },
     onSuccess: () => {
       toast.success("Task status updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["editProject", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
     },
   });
 
@@ -68,21 +68,18 @@ const TaskList = ({ tasks, canEdit }: TaskListProps) => {
 
       mutate({ projectId, taskId, status });
 
-      queryClient.setQueryData(
-        ["editProject", projectId],
-        (prevData: Project) => {
-          const updateTasks = prevData.tasks.map((task) => {
-            if (task._id === taskId) {
-              return {
-                ...task,
-                status,
-              };
-            }
-            return task;
-          });
-          return { ...prevData, tasks: updateTasks };
-        }
-      );
+      queryClient.setQueryData(["project", projectId], (prevData: Project) => {
+        const updateTasks = prevData.tasks.map((task) => {
+          if (task._id === taskId) {
+            return {
+              ...task,
+              status,
+            };
+          }
+          return task;
+        });
+        return { ...prevData, tasks: updateTasks };
+      });
     }
   };
 

@@ -1,6 +1,6 @@
-import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Fragment, useEffect } from "react";
+import ReactDOM from "react-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Task, TaskFormData } from "@/types/index";
 import { useForm } from "react-hook-form";
 import TaskForm from "./TaskForm";
@@ -8,18 +8,22 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateTask } from "@/api/TaskAPI";
 import { toast } from "react-toastify";
 
-type EditTaskModalProps = {
+interface EditTaskModalProps {
   data: Task;
-  taskId: Task["_id"];
-};
+  taskId: string;
+}
 
 export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
-  
-
   const navigate = useNavigate();
-
   const params = useParams();
   const projectId = params.projectId!;
+
+  // Leer si el modal debe mostrarse
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const modalTask = queryParams.get("editTask");
+
+  const show = modalTask ? true : false;
 
   const {
     register,
@@ -42,83 +46,77 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
     },
     onSuccess: () => {
       toast.success("Tarea actualizada con éxito");
-      queryClient.invalidateQueries({
-        queryKey: ["editProject", projectId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["task", taskId],
-      });
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["task", taskId] });
       reset();
       navigate(location.pathname, { replace: true });
     },
   });
 
   const handleEditTask = (formData: TaskFormData) => {
-    const data = {
-      projectId,
-      taskId,
-      formData,
-    };
-    mutate(data);
+    mutate({ projectId, taskId, formData });
   };
 
-  return (
-    <Transition appear show={true} as={Fragment}>
-      <Dialog
-        as="div"
-        className="relative z-10"
-        onClose={() => navigate(location.pathname, { replace: true })}
-      >
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black/60" />
-        </Transition.Child>
+  const handleClose = () => {
+    navigate(location.pathname, { replace: true });
+  };
 
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+  useEffect(() => {
+    if (show) {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        document.body.style.overflow = "hidden"; // Bloquea el desplazamiento
+      }, 50);
+      const handleEsc = (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+          handleClose();
+        }
+      };
+      document.addEventListener("keydown", handleEsc);
+      return () => {
+        document.body.style.overflow = "auto"; // Restaura el scroll al cerrar el modal
+        document.removeEventListener("keydown", handleEsc);
+      };
+    }
+  }, [show]);
+
+  if (!show) return null;
+
+  return ReactDOM.createPortal(
+    <Fragment>
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        {/* Contenedor del modal */}
+        <div className="relative bg-white rounded-lg shadow-lg p-8 w-full max-w-4xl">
+          {/* Botón de cierre */}
+          <button
+            onClick={() => navigate(location.pathname, { replace: true })}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          >
+            ✖
+          </button>
+
+          <h3 className="font-black text-4xl my-5 text-center">Editar Tarea</h3>
+          <p className="text-xl font-bold text-center">
+            Realiza cambios a una tarea en{" "}
+            <span className="text-fuchsia-600">este formulario</span>
+          </p>
+
+          <form
+            className="mt-10 space-y-3"
+            onSubmit={handleSubmit(handleEditTask)}
+            noValidate
+          >
+            <TaskForm register={register} errors={errors} />
+            <button
+              type="submit"
+              className="bg-fuchsia-600 hover:bg-fuchsia-700 w-full p-3 text-white font-black text-xl cursor-pointer"
             >
-              <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-16">
-                <Dialog.Title as="h3" className="font-black text-4xl  my-5">
-                  Editar Tarea
-                </Dialog.Title>
-
-                <p className="text-xl font-bold">
-                  Realiza cambios a una tarea en {""}
-                  <span className="text-fuchsia-600">este formulario</span>
-                </p>
-
-                <form
-                  className="mt-10 space-y-3"
-                  onSubmit={handleSubmit(handleEditTask)}
-                  noValidate
-                >
-                  <TaskForm register={register} errors={errors} />
-                  <input
-                    type="submit"
-                    className=" bg-fuchsia-600 hover:bg-fuchsia-700 w-full p-3  text-white font-black  text-xl cursor-pointer"
-                    value="Guardar Tarea"
-                  />
-                </form>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
+              Guardar Tarea
+            </button>
+          </form>
         </div>
-      </Dialog>
-    </Transition>
+      </div>
+    </Fragment>,
+    document.body
   );
 }

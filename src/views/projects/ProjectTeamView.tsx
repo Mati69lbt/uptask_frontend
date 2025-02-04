@@ -1,6 +1,6 @@
 import { getProjectTeam, removeUserFromProject } from "@/api/TeamApi";
 import AddMemberModal from "@/components/team/AddMemberModal";
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
@@ -78,13 +78,13 @@ const ProjectTeamView = () => {
               </div>
               <div className="flex shrink-0 items-center gap-x-6">
                 <Menu as="div" className="relative flex-none">
-                  <Menu.Button className="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900">
+                  <MenuButton className="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900">
                     <span className="sr-only">opciones</span>
                     <EllipsisVerticalIcon
                       className="h-9 w-9"
                       aria-hidden="true"
                     />
-                  </Menu.Button>
+                  </MenuButton>
                   <Transition
                     as={Fragment}
                     enter="transition ease-out duration-100"
@@ -94,8 +94,8 @@ const ProjectTeamView = () => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                      <Menu.Item>
+                    <MenuItems className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                      <MenuItem>
                         <button
                           type="button"
                           className="block px-3 py-1 text-sm leading-6 text-red-500"
@@ -105,8 +105,8 @@ const ProjectTeamView = () => {
                         >
                           Eliminar del Proyecto
                         </button>
-                      </Menu.Item>
-                    </Menu.Items>
+                      </MenuItem>
+                    </MenuItems>
                   </Transition>
                 </Menu>
               </div>

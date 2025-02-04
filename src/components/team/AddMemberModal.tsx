@@ -1,5 +1,5 @@
-import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, useEffect } from "react";
+import ReactDOM from "react-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddMemberForm from "./AddMemberForm";
 
@@ -7,58 +7,62 @@ export default function AddMemberModal() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Leer si el modal debe mostrarse
   const queryParams = new URLSearchParams(location.search);
   const addMember = queryParams.get("addMember");
   const show = addMember ? true : false;
 
-  return (
-    <>
-      <Transition appear show={show} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-10"
-          onClose={() => navigate(location.pathname, { replace: true })}
-        >
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/60" />
-          </Transition.Child>
+  const handleClose = () => {
+    navigate(location.pathname, { replace: true });
+  };
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-16">
-                  <Dialog.Title as="h3" className="font-black text-4xl  my-5">
-                    Agregar Integrante al equipo
-                  </Dialog.Title>
-                  <p className="text-xl font-bold">
-                    Busca el nuevo integrante por email {""}
-                    <span className="text-fuchsia-600">
-                      para agregarlo al proyecto
-                    </span>
-                  </p>
-                  <AddMemberForm />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-    </>
+  // 🔹 Centrar la pantalla en el modal cuando se abre
+  useEffect(() => {
+    if (show) {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 50);
+    }
+  }, [show]);
+
+  // Si el modal no está activo, no lo renderizamos
+  if (!show) return null;
+
+  return ReactDOM.createPortal(
+    <Fragment>
+      {/* Fondo Oscuro */}
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 z-50"
+        onClick={handleClose}
+      ></div>
+
+      {/* Contenido del Modal */}
+      <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div
+          className="relative bg-white rounded-lg shadow-lg p-10 w-full max-w-4xl"
+          onClick={(e) => e.stopPropagation()} // Evita que el clic dentro del modal lo cierre
+        >
+          {/* Botón de cierre */}
+          <button
+            onClick={handleClose}
+            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-2xl"
+          >
+            ✖
+          </button>
+
+          <h3 className="font-black text-4xl my-5">
+            Agregar Integrante al equipo
+          </h3>
+          <p className="text-xl font-bold">
+            Busca el nuevo integrante por email {""}
+            <span className="text-fuchsia-600">para agregarlo al proyecto</span>
+          </p>
+
+          {/* Formulario */}
+          <AddMemberForm />
+        </div>
+      </div>
+    </Fragment>,
+    document.body
   );
 }
